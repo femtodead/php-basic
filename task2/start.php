@@ -152,8 +152,8 @@
         return $five;
     }
     function Gettime()  {
-        $hours = (int) date('H');
-        $minutes = (int) date('i');
+        $hours = (int) date('H')+3;
+        $minutes = (int) date('i')+3;
         return $hours . ' ' . sklonenie($hours, "час", "часа", "часов") . ' ' . $minutes . ' ' . sklonenie($minutes, 'минута', 'минуты', 'минут') . "\n";
     }
     echo Gettime();
