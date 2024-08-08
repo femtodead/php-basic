@@ -7,7 +7,7 @@ class Closet{
     const MAX_BOOKS = 10;
     private array $books = [];
 
-    public function __construct(array $initialBooks = []){
+    public function __construct(array $initialBooks = [String]){
         if (!empty($initialBooks)) {
             foreach ($initialBooks as $book) {
                 $this->addBook($book);
