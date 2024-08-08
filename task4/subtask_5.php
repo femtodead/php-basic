@@ -25,7 +25,7 @@ abstract class Book {
 
 
 
-    abstract public function getAccessInfo(): string; // создаем абстрактный метод но не описываем его так как в дочерних класах он будет возвращать разные вещи(можно также реализовать через интерфес)
+    abstract public function BookIssuance(): string; // создаем абстрактный метод но не описываем его так как в дочерних класах он будет возвращать разные вещи(можно также реализовать через интерфес)
 }
 
 class DigitalBook extends Book {
@@ -40,7 +40,7 @@ class DigitalBook extends Book {
         return $this->downloadLink;
     }
 
-    public function getAccessInfo(): string {// каждый просмотор информации увеличивает количиство прочтений на 1
+    public function BookIssuance(): string {// каждая выдача книги увеличивает количиство прочтений на 1
         $this->readCount++;
         return "Ссылка для скачивания: " . $this->downloadLink;
     }
@@ -58,7 +58,7 @@ class PhysicalBook extends Book {
         return $this->libraryAddress;
     }
 
-    public function getAccessInfo(): string {// каждый просмотор информации увеличивает количиство прочтений на 1
+    public function BookIssuance(): string {// каждая выдача книги увеличивает количиство прочтений на 1
         $this->readCount++;
         return "Адрес библиотеки: " . $this->libraryAddress;
     }
@@ -67,11 +67,11 @@ class PhysicalBook extends Book {
 
 
 $digitalBook = new DigitalBook("1984", "George Orwell", "http://example.com/1984");
-echo $digitalBook->getAccessInfo() . "\r\n"; 
+echo $digitalBook->BookIssuance() . "\r\n"; 
 echo "Количество прочтений: " . $digitalBook->getReadCount() . "\r\n"; 
-echo $digitalBook->getAccessInfo() . "\r\n"; 
+echo $digitalBook->BookIssuance() . "\r\n"; 
 echo "Количество прочтений: " . $digitalBook->getReadCount() . "\r\n"; 
 
 $physicalBook = new PhysicalBook("To Kill a Mockingbird", "Harper Lee", "ул. Библиотечная, д. 1");
-echo $physicalBook->getAccessInfo() . "\r\n"; 
+echo $physicalBook->BookIssuance() . "\r\n"; 
 echo "Количество прочтений: " . $physicalBook->getReadCount() . "\r\n"; 
