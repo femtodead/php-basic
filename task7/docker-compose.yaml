@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  # Контейнер с Nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: myapp/nginx
+    container_name: webserver
+    ports:
+      - "80:80"
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  # Контейнер с PHP-FPM
+  application:
+    build:
+      context: ./fpm
+      dockerfile: Dockerfile
+    image: myapp/php
+    container_name: application
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - app-network
+    depends_on:
+      - memcached  # Добавлено, чтобы PHP контейнер ждал запуска Memcached
+
+  # Контейнер с CLI
+  cli:
+    build:
+      context: ./cli
+      dockerfile: Dockerfile
+    image: myapp/php-cli
+    container_name: cli
+    volumes:
+      - ./code:/data/mysite.local
+    networks:
+      - app-network
+
+  # Контейнер с БД
+  database:
+    image: mysql:5.7
+    container_name: database
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Контейнер с Memcached
+  memcached:
+    image: memcached:alpine
+    container_name: memcached
+    ports:
+      - "11211:11211"
+    networks:
+      - app-network
+
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge
