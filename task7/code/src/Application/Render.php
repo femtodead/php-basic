@@ -15,7 +15,7 @@ class Render {
     public function __construct(){
         $this->loader = new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . $this->viewFolder);
         $this->environment = new Environment($this->loader, [
-            'cache' => $_SERVER['DOCUMENT_ROOT'].'/cache/',
+            //'cache' => $_SERVER['DOCUMENT_ROOT'].'/cache/',
         ]);
     }
 
@@ -24,9 +24,10 @@ class Render {
         
         $templateVariables['content_template_name'] = $contentTemplateName;
 
-        if(isset($_SESSION['user_name'])){
+        if(isset($_SESSION['auth']['user_name'])){
             $templateVariables['user_authorized'] = true;
-            $templateVariables['user_name'] = $_SESSION['user_name'];
+            $templateVariables['user_name'] = $_SESSION['auth']['user_name'];
+
         }
  
         return $template->render($templateVariables);

@@ -26,23 +26,9 @@ class Application {
         Application::$auth = new Auth();
     }
 
-    public function generateCsrfToken(): string {
-
-
-        $token = bin2hex(random_bytes(32));
-        $_SESSION['csrf_token'] = $token;
-
-        return $token;
-    }
-
-    public function validateCsrfToken($token): bool {
-
-
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
-
     public function run() : string {
         session_start();
+        Application::$auth->restoreSession();
 
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
 
@@ -99,8 +85,12 @@ class Application {
     private function checkAccessToMethod(AbstractController $controllerInstance, string $methodName): bool {
         $userRoles = $controllerInstance->getUserRoles();
 
+
+
         $rules = $controllerInstance->getActionsPermissions($methodName);
-        $rules[]= 'user';
+
+        $rules[] = 'user';
+
         $isAllowed = false;
 
         if(!empty($rules)){
@@ -111,7 +101,8 @@ class Application {
                 }
             }
         }
-        // return true;
+
         return $isAllowed;
+
     }
 }

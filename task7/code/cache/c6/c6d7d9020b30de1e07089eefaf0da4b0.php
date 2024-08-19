@@ -40,9 +40,7 @@ class __TwigTemplate_7e16fd29c4b280e60bf5bc4b8f9e193c extends Template
 ";
         } else {
             // line 4
-            echo "    <p>Добро пожаловать на сайт ";
-            echo twig_escape_filter($this->env, ($context["user_name"] ?? null), "html", null, true);
-            echo "!</p>
+            echo "    <p>Добро пожаловать на сайт!</p>
 ";
         }
     }

@@ -43,30 +43,17 @@ class __TwigTemplate_e0abd865af2a73441ea0e85d1722adc1 extends Template
         echo "</title>
     </head>
     <body>
-    <p>CSRF Token: ";
-        // line 7
-        echo twig_escape_filter($this->env, ($context["csrf_token"] ?? null), "html", null, true);
-        echo "</p>
-        ";
-        // line 8
-        if (($context["user_authorized"] ?? null)) {
-            // line 9
-            echo "        <p><a href=\"/user/logout\">Выход</a></p>
-
-        ";
-        }
-        // line 12
-        echo "        <div id=\"header\">
+        <div id=\"header\">
             ";
-        // line 13
-        $this->loadTemplate("auth-template.tpl", "main.tpl", 13)->display($context);
-        // line 14
+        // line 8
+        $this->loadTemplate("auth-template.tpl", "main.tpl", 8)->display($context);
+        // line 9
         echo "        </div>
 
         ";
-        // line 16
-        $this->loadTemplate(($context["content_template_name"] ?? null), "main.tpl", 16)->display($context);
-        // line 17
+        // line 11
+        $this->loadTemplate(($context["content_template_name"] ?? null), "main.tpl", 11)->display($context);
+        // line 12
         echo "    </body>
 </html>";
     }
@@ -83,7 +70,7 @@ class __TwigTemplate_e0abd865af2a73441ea0e85d1722adc1 extends Template
 
     public function getDebugInfo()
     {
-        return array (  70 => 17,  68 => 16,  64 => 14,  62 => 13,  59 => 12,  54 => 9,  52 => 8,  48 => 7,  42 => 4,  37 => 1,);
+        return array (  57 => 12,  55 => 11,  51 => 9,  49 => 8,  42 => 4,  37 => 1,);
     }
 
     public function getSourceContext()

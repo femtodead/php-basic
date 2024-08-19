@@ -12,90 +12,125 @@ class UserController extends AbstractController {
     protected array $actionsPermissions = [
         'actionHash' => ['admin'],
         'actionSave' => ['admin'],
-        'actionIndex' => ['admin'],
         'actionEdit' => ['admin'],
+        'actionIndex' => ['admin'],
         'actionLogout' => ['admin'],
-        'actionLogin' => ['admin']
     ];
-
-    public function actionLogout(): string {
-        session_unset();
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
 
     public function actionIndex(): string {
         $users = User::getAllUsersFromStorage();
+
         $render = new Render();
 
-        if (!$users) {
+        if(!$users){
             return $render->renderPage(
                 'user-empty.tpl', 
                 [
                     'title' => 'Список пользователей в хранилище',
                     'message' => "Список пуст или не найден"
-                ]
-            );
-        } else {
+                ]);
+        }
+        else{
             return $render->renderPage(
                 'user-index.tpl', 
                 [
                     'title' => 'Список пользователей в хранилище',
                     'users' => $users
-                ]
-            );
+                ]);
         }
     }
 
     public function actionSave(): string {
-        $app = new Application();
-        $csrfToken = $_POST['csrf_token'] ?? null;  // Проверяем наличие токена
-    
-        if ($csrfToken && $app->validateCsrfToken($csrfToken)) {
-            if (User::validateRequestData()) {
-                $user = new User();
-                $user->setParamsFromRequestData();
-                $user->saveToStorage();
-    
-                $render = new Render();
-                return $render->renderPage(
-                    'user-created.tpl', 
-                    [
-                        'title' => 'Пользователь создан',
-                        'message' => "Создан пользователь " . $user->getUserName() . " " . $user->getUserLastName()
-                    ]
-                );
-            } else {
-                throw new \Exception("Переданные данные некорректны");
-            }
-        } else {
-            throw new \Exception("CSRF токен недействителен или отсутствует");
+        if(User::validateRequestData()) {
+            $user = new User();
+            $user->setParamsFromRequestData();
+            $user->saveToStorage();
+
+            $render = new Render();
+
+            return $render->renderPage(
+                'user-created.tpl', 
+                [
+                    'title' => 'Пользователь создан',
+                    'message' => "Создан пользователь " . $user->getUserName() . " " . $user->getUserLastName()
+                ]);
+        }
+        else {
+            throw new \Exception("Переданные данные некорректны");
+        }
+    }
+
+    public function actionDelete(): string {
+        if(User::exists($_GET['user_id'])) {
+            User::deleteFromStorage($_GET['user_id']);
+
+            header('Location: /user');
+            die();
+
+        }
+        else {
+            throw new \Exception("Пользователь не существует");
         }
     }
 
     public function actionEdit(): string {
-        $app = new Application();
         $render = new Render();
+
+
+        $action = '/user/save';
+        if(isset($_GET['user_id'])){
+            $userId = $_GET['user_id'];
+            $action = '/user/update';
+            $userData = User::getUserDataByID($userId);
+
+        }
+        
         return $render->renderPageWithForm(
-            'user-form.tpl', 
+                'user-form.tpl', 
+                [
+                    'title' => 'Форма создания пользователя',
+                    'user_data'=> $userData ?? [],
+                    'action' => $action
+                ]);
+    }
+
+    public function actionUpdate(): string {
+        if(User::exists($_POST['user_id'])) {
+            $user = new User();
+            $user->setUserId($_POST['user_id']);
+
+            $arrayData = [];
+
+            if(isset($_POST['name']))
+                $arrayData['user_name'] = $_POST['name'];
+
+            if(isset($_POST['lastname'])) {
+                $arrayData['user_lastname'] = $_POST['lastname'];
+            }
+
+            $user->updateUser($arrayData);
+        }
+        else {
+            throw new \Exception("Пользователь не существует");
+        }
+
+        $render = new Render();
+        return $render->renderPage(
+            'user-created.tpl',
             [
-                'title' => 'Форма создания пользователя',
-                'csrf_token' => $app->generateCsrfToken()  // Генерация и передача CSRF токена в форму
-            ]
-        );
+                'title' => 'Пользователь обновлен',
+                'message' => "Обновлен пользователь " . $user->getUserId()
+            ]);
     }
 
     public function actionAuth(): string {
-        $app = new Application();
         $render = new Render();
+        
         return $render->renderPageWithForm(
-            'user-auth.tpl', 
-            [
-                'title' => 'Форма логина',
-                'csrf_token' => $app->generateCsrfToken()  // Генерация и передача CSRF токена в форму
-            ]
-        );
+                'user-auth.tpl', 
+                [
+                    'title' => 'Форма логина'
+                ]);
     }
 
     public function actionHash(): string {
@@ -103,80 +138,41 @@ class UserController extends AbstractController {
     }
 
     public function actionLogin(): string {
-        $app = new Application();
-        $csrfToken = $_POST['csrf_token'] ?? null;  // Проверяем наличие токена
-    
-        if ($csrfToken && $app->validateCsrfToken($csrfToken)) {
-            $result = false;
-            if (isset($_POST['login']) && isset($_POST['password'])) {
-                $result = Application::$auth->proceedAuth($_POST['login'], $_POST['password']);
-            }
-    
-            if (!$result) {
-                $render = new Render();
-                return $render->renderPageWithForm(
-                    'user-auth.tpl', 
-                    [
-                        'title' => 'Форма логина',
-                        'auth-success' => false,
-                        'auth-error' => 'Неверные логин или пароль',
-                        'csrf_token' => $app->generateCsrfToken()  // Генерация нового токена при ошибке
-                    ]
-                );
-            } else {
-                header('Location: /');
-                return "";
-            }
-        } else {
-            throw new \Exception("CSRF токен недействителен или отсутствует");
-        }
-    }
+        $result = false;
 
-    public function actionUpdate(): string {
-        $app = new Application();
-        
-        // Проверка наличия CSRF токена в POST данных
-        if (!isset($_POST['csrf_token'])) {
-            throw new \Exception("CSRF токен отсутствует");
-        }
-    
-        // Валидация токена
-        if ($app->validateCsrfToken($_POST['csrf_token'])) {
-            if (isset($_POST['id']) && User::validateRequestData()) {
-                $user = User::getUserById($_POST['id']);
-                $user->setParamsFromRequestData();
-                $user->saveToStorage();
-    
-                $render = new Render();
-                return $render->renderPage(
-                    'user-updated.tpl', 
-                    [
-                        'title' => 'Пользователь обновлен',
-                        'message' => 'Данные пользователя обновлены: ' . $user->getUserName() . ' ' . $user->getUserLastName()
-                    ]
-                );
-            } else {
-                throw new \Exception("Некорректные данные для обновления");
-            }
-        } else {
-            throw new \Exception("CSRF токен недействителен");
-        }
-    }
+        if(isset($_POST['login']) && isset($_POST['password'])){
+            $result = Application::$auth->proceedAuth($_POST['login'], $_POST['password']);
+            if($result &&
+                isset($_POST['user-remember']) && $_POST['user-remember'] == 'remember'){
+                $token = Application::$auth->generateToken($_SESSION['auth']['id_user']);
 
-    public function actionRemove(): string {
-        $app = new Application();
-        if ($app->validateCsrfToken($_POST['csrf_token'])) {
-            User::deleteUserById($_POST['id']);
+                User::setToken($_SESSION['auth']['id_user'], $token);
+            }
+        }
+
+
+
+        if(!$result){
             $render = new Render();
-            return $render->renderPage(
-                'user-deleted.tpl', 
+
+            return $render->renderPageWithForm(
+                'user-auth.tpl', 
                 [
-                    'title' => 'Пользователь удален',
-                    'message' => 'Пользователь успешно удален'
-                ]
-            );
-        } else {
-            throw new \Exception("CSRF токен недействителен");
+                    'title' => 'Форма логина',
+                    'auth-success' => false,
+                    'auth-error' => 'Неверные логин или пароль'
+                ]);
         }
+        else{
+            header('Location: /');
+            return "";
+        }
+    }
+    public function actionLogout(): void {
+        User::destroyToken();
+        session_destroy();
+        unset($_SESSION['auth']);
+        header("Location: /");
+        die();
     }
 }
