@@ -6,6 +6,10 @@ use Geekbrains\Application1\Domain\Controllers\AbstractController;
 use Geekbrains\Application1\Infrastructure\Config;
 use Geekbrains\Application1\Infrastructure\Storage;
 use Geekbrains\Application1\Application\Auth;
+use Monolog\Handler\FirePHPHandler;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 
 class Application {
 
@@ -20,12 +24,25 @@ class Application {
 
     public static Auth $auth;
 
+    public static Logger $loger;
+
     public function __construct(){
         Application::$config = new Config();
         Application::$storage = new Storage();
         Application::$auth = new Auth();
-    }
 
+        Application::$loger = new Logger('application_logger');
+        Application::$loger->pushHandler(new StreamHandler( $_SERVER['DOCUMENT_ROOT']. "/log/" . Application::$config->get()['log']['LOGS_FILE'] . "-" .date('Y-m-d'). ".log", Level::Debug));
+        Application::$loger->pushHandler(new FirePHPHandler());
+    }
+    public function getMethodName() : String
+    {
+        return $this->methodName;
+    }
+    public function getControllerName() : String
+    {
+        return $this->controllerName;
+    }
     public function run() : string {
         session_start();
         Application::$auth->restoreSession();
@@ -74,6 +91,10 @@ class Application {
                 }
             }
             else {
+                $errorMessedg = "Метод ". $this->$methodName . "не существет в контроллере " . $this->controllerName . "Попытка перейти по адресу " . $_SERVER['REQUEST_URI'];
+
+                Application::$loger->error($errorMessedg);
+
                 return "Метод не существует";
             }
         }

@@ -23,7 +23,7 @@ class Render {
         $template = $this->environment->load('main.tpl');
         
         $templateVariables['content_template_name'] = $contentTemplateName;
-
+        
         if(isset($_SESSION['auth']['user_name'])){
             $templateVariables['user_authorized'] = true;
             $templateVariables['user_name'] = $_SESSION['auth']['user_name'];

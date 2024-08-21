@@ -8,6 +8,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 
 RUN apt-get update && apt-get install zip unzip
 RUN docker-php-ext-install pdo_mysql
+RUN composer require monolog/monolog
 
 WORKDIR /data/mysite.local
 

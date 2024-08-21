@@ -43,7 +43,7 @@ function validate(string $date): bool { // перелопатил валидат
                 if ($dateBlocks[2] == $year && $dateBlocks[1] > $month) { // исключаем ввод пользователя больше нынешнего месяца нынешнего года
                     return false;
                 } else {
-                   if (($dateBlocks[2] == $year && $dateBlocks[1] == $month) && $dateBlocks[0]>$day = (int) date('d');) { // исключаем ввод пользователя большего дня нынешнего месяца, нынешнего года
+                   if (($dateBlocks[2] == $year && $dateBlocks[1] == $month) && $dateBlocks[0]>$day = (int) date('d')) { // исключаем ввод пользователя большего дня нынешнего месяца, нынешнего года
                     return false;
                    } else {
                     if ($dateBlocks[0] < 1) {// проверка на ввод отрицательных или 0 значений

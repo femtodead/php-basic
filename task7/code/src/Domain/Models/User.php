@@ -80,25 +80,39 @@ class User {
 
     public static function validateRequestData(): bool{
         $result = true;
-        
+        $lastname=$_POST['lastname'];
+        $name=$_POST['name'];
+        $birthday=$_POST['birthday'];
         if(!(
             isset($_POST['name']) && !empty($_POST['name']) &&
             isset($_POST['lastname']) && !empty($_POST['lastname']) &&
             isset($_POST['birthday']) && !empty($_POST['birthday'])
         )){
             $result = false;
+            if($_POST['name']==null){
+                Application::$loger->error("Ошибка имени  name = ". $name);
+            }
+            if($_POST['lastname']==null){
+                Application::$loger->error("Ошибка фамилии  lastname = ". $lastname);
+            }
+            if($_POST['birthday']==null){
+                Application::$loger->error("Ошибка даты  birthday = ". $birthday);
+            }
         }
 
         if(preg_match('/<[^>]*>/', $_POST['name']) || preg_match('/<[^>]*>/', $_POST['lastname'])){
             $result =  false;
+            Application::$loger->error("Попытка ввести скрипт или тэг, lastname = ". $lastname. " name = ". $name);
         }
 
         if(!preg_match('/^(\d{2}-\d{2}-\d{4})$/', $_POST['birthday'])){
             $result =  false;
+            Application::$loger->error("Дата рождения указана не корректно ". $birthday);
         }
 
         if(!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] != $_POST['csrf_token']){
             $result = false;
+            Application::$loger->error("Проблема с токеном ".!isset($_SESSION['csrf_token']). "== true || ".$_SESSION['csrf_token']. " != ". $_POST['csrf_token']  );
         }
 
         return $result;

@@ -60,6 +60,7 @@ class UserController extends AbstractController {
         }
     }
 
+
     public function actionDelete(): string {
         if(User::exists($_GET['user_id'])) {
             User::deleteFromStorage($_GET['user_id']);

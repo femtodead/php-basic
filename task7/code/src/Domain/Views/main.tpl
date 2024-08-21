@@ -4,6 +4,8 @@
         <title>{{ title }}</title>
     </head>
     <body>
+    {{ xdebug | raw }}
+
         <div id="header">
             {% include "auth-template.tpl" %}
         </div>
