@@ -36,72 +36,72 @@ class __TwigTemplate_9e876dc8b08b34ddae441d2fe0085022 extends Template
         // line 1
         echo "<p>Список пользователей в хранилище</p>
 
-      <div class=\"table-responsive small\">
-        <table class=\"table table-striped table-sm\">
-          <thead>
+<div class=\"table-responsive small\">
+    <table class=\"table table-striped table-sm\">
+        <thead>
             <tr>
-              <th scope=\"col\">ID</th>
-              <th scope=\"col\">Имя</th>
-              <th scope=\"col\">Фамилия</th>
-              <th scope=\"col\">День рождения</th>
-              ";
+                <th scope=\"col\">ID</th>
+                <th scope=\"col\">Имя</th>
+                <th scope=\"col\">Фамилия</th>
+                <th scope=\"col\">День рождения</th>
+                ";
         // line 11
         if (($context["isAdmin"] ?? null)) {
             // line 12
-            echo "              <td scope=\"col\">Редактирование </td>
-              <td scope=\"col\"> Удаление </td>
-              ";
+            echo "                <td scope=\"col\">Редактирование </td>
+                <td scope=\"col\">Удаление </td>
+                ";
         }
         // line 15
         echo "            </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
             ";
         // line 18
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(($context["users"] ?? null));
         foreach ($context['_seq'] as $context["_key"] => $context["user"]) {
             // line 19
-            echo "            <tr>       
-              <td>";
+            echo "            <tr>
+                <td>";
             // line 20
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserId", [], "method", false, false, false, 20), "html", null, true);
-            echo "</td>   
-              <td>";
+            echo "</td>
+                <td>";
             // line 21
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserName", [], "method", false, false, false, 21), "html", null, true);
             echo "</td>
-              <td>";
+                <td>";
             // line 22
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserLastName", [], "method", false, false, false, 22), "html", null, true);
             echo "</td>
-              <td>";
+                <td>";
             // line 23
             if ( !twig_test_empty(twig_get_attribute($this->env, $this->source, $context["user"], "getUserBirthday", [], "method", false, false, false, 23))) {
                 // line 24
                 echo "                    ";
                 echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserBirthday", [], "method", false, false, false, 24), "d.m.Y"), "html", null, true);
                 echo "
-                  ";
+                    ";
             } else {
                 // line 26
                 echo "                    <b>Не задан</b>
-                  ";
+                    ";
             }
             // line 28
-            echo "              </td>
-              ";
+            echo "                </td>
+                ";
             // line 29
             if (($context["isAdmin"] ?? null)) {
                 // line 30
-                echo "              <td scope=\"col\"><a href=\"/user/edit/?id_user=";
+                echo "                <td scope=\"col\"><a href=\"/user/edit/?id_user=";
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserId", [], "method", false, false, false, 30), "html", null, true);
-                echo "\"> Редактирование </a></td>
-              <td scope=\"col\"><a href=\"/user/edit/?user-id=";
+                echo "\">Редактирование</a></td>
+                <td scope=\"col\"><a href=\"javascript:void(0);\" onclick=\"deleteUser(";
                 // line 31
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["user"], "getUserId", [], "method", false, false, false, 31), "html", null, true);
-                echo "\"> Удаление </a></td>
-              ";
+                echo ")\">Удаление</a></td>
+                ";
             }
             // line 33
             echo "            </tr>
@@ -111,13 +111,16 @@ class __TwigTemplate_9e876dc8b08b34ddae441d2fe0085022 extends Template
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['user'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
         // line 35
-        echo "          </tbody>
-        </table>
-      </div>
-
+        echo "        </tbody>
+    </table>
+</div>
+<input type=\"hidden\" id=\"isAdmin\" value=\"";
+        // line 38
+        echo ((($context["isAdmin"] ?? null)) ? ("true") : ("false"));
+        echo "\">
 <script>
     let maxId = \$('.table-responsive tbody tr:last-child td:first-child').html();
-  
+    let isAdmin = \$('#isAdmin').val() === 'true';
     setInterval(function () {
       \$.ajax({
           method: 'POST',
@@ -139,16 +142,16 @@ class __TwigTemplate_9e876dc8b08b34ddae441d2fe0085022 extends Template
               row += \"<td>\" + users[k].username + \"</td>\";
               row += \"<td>\" + users[k].userlastname + \"</td>\";
               row += \"<td>\" + users[k].userbirthday + \"</td>\";
-              
+               if(isAdmin) {
               row += \"<td scope='col'><a href='/user/edit/?id_user=";
         // line 64
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["user"] ?? null), "getUserId", [], "method", false, false, false, 64), "html", null, true);
         echo "'> Редактирование </a></td>\"
-              row += \"<td scope='col'><a href='/user/edit/?user-id=";
+              row += \"<td scope='col'><a href='/user/deluser/?user-id=";
         // line 65
         echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["user"] ?? null), "getUserId", [], "method", false, false, false, 65), "html", null, true);
         echo "'> Удаление </a></td>\"
-              
+               }
               row += \"</tr>\";
 
               \$('.content-template tbody').append(row);
@@ -158,6 +161,27 @@ class __TwigTemplate_9e876dc8b08b34ddae441d2fe0085022 extends Template
           
       });
     }, 10000);
+function deleteUser(userId) {
+    if (confirm(\"Вы уверены, что хотите удалить этого пользователя?\")) {
+        // Задержка в 2 секунды (2000 миллисекунд)
+        setTimeout(function() {
+            \$.ajax({
+                method: 'POST',
+                url: '/user/del/', // URL для удаления пользователя
+                data: { id: userId },
+                success: function(response) {
+                    // Удаляем строку из таблицы после успешного удаления
+                    \$('tr').filter(function() {
+                        return \$(this).find('td:first').text() == userId;
+                    }).remove();
+                },
+                error: function() {
+                    alert(\"Ошибка при удалении пользователя.\");
+                }
+            });
+        }, 2000); // 2000 миллисекунд = 2 секунды
+    }
+}
 </script>";
     }
 
@@ -173,7 +197,7 @@ class __TwigTemplate_9e876dc8b08b34ddae441d2fe0085022 extends Template
 
     public function getDebugInfo()
     {
-        return array (  149 => 65,  145 => 64,  114 => 35,  107 => 33,  102 => 31,  97 => 30,  95 => 29,  92 => 28,  88 => 26,  82 => 24,  80 => 23,  76 => 22,  72 => 21,  68 => 20,  65 => 19,  61 => 18,  56 => 15,  51 => 12,  49 => 11,  37 => 1,);
+        return array (  152 => 65,  148 => 64,  119 => 38,  114 => 35,  107 => 33,  102 => 31,  97 => 30,  95 => 29,  92 => 28,  88 => 26,  82 => 24,  80 => 23,  76 => 22,  72 => 21,  68 => 20,  65 => 19,  61 => 18,  56 => 15,  51 => 12,  49 => 11,  37 => 1,);
     }
 
     public function getSourceContext()

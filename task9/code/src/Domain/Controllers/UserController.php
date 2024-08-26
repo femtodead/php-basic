@@ -47,7 +47,8 @@ class UserController extends AbstractController {
 
         $users = User::getAllUsersFromStorage($limit);
         $usersData = [];
-        // $userA = $this->getUserRoles();
+        $userA = $this->getUserRoles();
+        // array_push($usersData, '{role:'.$userA[0].'}');
         // print_r($userA);
         // $render = new Render();
  
@@ -74,7 +75,6 @@ class UserController extends AbstractController {
                 $usersData[] = $user->getUserDataAsArray();
             }
         }
-        // array_push($usersData, '{role:'.$userA[0].'}');
         return json_encode($usersData);
     }
 
@@ -152,5 +152,33 @@ class UserController extends AbstractController {
         header("Location: /");
         die();
     }
+
+    public function actionDeluser(): string {
+        $render = new Render();
+        return $render->renderPageWithForm(
+                'user-form-del.tpl', 
+                [
+                    'title' => 'Форма создания пользователя',
+                    'userid' => (int) $_GET["user-id"],
+
+                ]);
+        if(User::exists($_GET['user-id'])){
+           
+        }
+        
+    }
+    public function actionDel(): void {
+        if (isset($_POST['id']) && User::exists((int)$_POST['id'])) {
+            User::deleteFromStorage((int)$_POST['id']);
+            // Можно вернуть сообщение о статусе удаления
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'success']);
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'User not found']);
+        }
+        exit();
+    }
+    
 }
 
