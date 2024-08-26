@@ -32,7 +32,7 @@ class Application {
         Application::$auth = new Auth();
 
         Application::$loger = new Logger('application_logger');
-        Application::$loger->pushHandler(new StreamHandler( $_SERVER['DOCUMENT_ROOT']. "/log/" . Application::$config->get()['log']['LOGS_FILE'] . "-" .date('Y-m-d'). ".log", Level::Debug));
+        Application::$loger->pushHandler(new StreamHandler( $_SERVER['DOCUMENT_ROOT']. "../log/" . Application::$config->get()['log']['LOGS_FILE'] . "-" .date('Y-m-d'). ".log", Level::Debug));
         Application::$loger->pushHandler(new FirePHPHandler());
     }
     public function getMethodName() : String

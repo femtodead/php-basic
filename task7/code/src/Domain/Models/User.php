@@ -14,7 +14,7 @@ class User {
     private ?int $userBirthday;
     private ?string $login;
 
-    private static string $storageAddress = '/storage/birthdays.txt';
+   
 
     public function __construct(int $idUser = null, string $login = null, string $name = null, string $lastName = null,
                                 int $birthday = null){
